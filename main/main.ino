@@ -5,6 +5,7 @@
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <TinyGPS++.h>
+#include <HardwareSerial.h>
 
 
 //############### wifi bluetooth
@@ -30,6 +31,8 @@ struct GPSLocation {
   double longitude;
 };
 
+// GSM serial
+HardwareSerial gsm(1); // Use UART1 (pins 16, 17)
 
 // ********************************* setup ************
 void setup() {

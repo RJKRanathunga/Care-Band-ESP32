@@ -1,5 +1,8 @@
 //********************************** Render server ***********
 
+// APN for SIM card
+const char* apn = "dialogbb";  // e.g., "dialogbb" or "mobitel3g"
+
 void send_message_Render(String command,String message){
     // Make HTTPS GET request
   if (WiFi.status() == WL_CONNECTED) {
@@ -20,9 +23,13 @@ void send_message_Render(String command,String message){
     http.addHeader("my-api-key", my_apiKey);
 
         // Create JSON string
-    String jsonPayload = "{\"command\":\"" + command + "\", \"message\":\"" + message + "\"}";
+    String jsonPayload = 
+      String("{\"x-api-key\":\"") + x_apiKey +
+      "\", \"my-api-key\":\"" + my_apiKey +
+      "\", \"command\":\"" + command +
+      "\", \"message\":\"" + message + "\"}";
 
-    int httpResponseCode = http.GET(jsonPayload); // Send GET request
+    int httpResponseCode = http.POST(jsonPayload); // Send GET request
 
     if (httpResponseCode > 0) {
       String payload = http.getString();
@@ -35,8 +42,46 @@ void send_message_Render(String command,String message){
 
     http.end(); // Close connection
   } else {
-    Serial.println("WiFi not connected!");
+    Serial.println("WiFi not connected. Using GSM...");
+    useGSMToSend(command, message);
   }
+}
+
+void sendAT(String cmd) {
+  gsm.println(cmd);
+  delay(1000);
+  while (gsm.available()) {
+    Serial.write(gsm.read());
+  }
+}
+
+void useGSMToSend(String command, String message) {
+  String jsonPayload = 
+    String("{\"x-api-key\":\"") + x_apiKey +
+    "\", \"my-api-key\":\"" + my_apiKey +
+    "\", \"command\":\"" + command +
+    "\", \"message\":\"" + message + "\"}";
+
+  sendAT("AT");
+  sendAT("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
+  sendAT("AT+SAPBR=3,1,\"APN\",\"" + String(apn) + "\"");
+  sendAT("AT+SAPBR=1,1");
+  delay(2000);
+  sendAT("AT+HTTPINIT");
+  sendAT("AT+HTTPPARA=\"CID\",1");
+  sendAT(String("AT+HTTPPARA=\"URL\",\"") + serverURL + "\"");
+  sendAT("AT+HTTPPARA=\"CONTENT\",\"application/json\"");
+
+  sendAT("AT+HTTPDATA=" + String(jsonPayload.length()) + ",10000");
+  delay(1000);
+  gsm.print(jsonPayload);
+  delay(2000);
+
+  sendAT("AT+HTTPACTION=1");
+  delay(6000);
+  sendAT("AT+HTTPREAD");
+  sendAT("AT+HTTPTERM");
+  sendAT("AT+SAPBR=0,1");
 }
 
 

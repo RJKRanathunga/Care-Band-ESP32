@@ -63,6 +63,11 @@ void trackUser(){
     isUser_atHome = true;
   } else {
     Serial.println("User is away from home.");
-    send_data_Redis(current_location);   // send GPS location to redis
+    // send_data_Redis(current_location);   // send GPS location to redis
+    String coordinate = "(" + String(current_location.latitude,6) + "," + String(current_location.longitude,6) + ")";
+
+    Serial.println("Sending GPS location as JSON via send_message_Render...");
+    // Use the existing function to send the data
+    send_message_Render("save_location", coordinate);
   }
 }
