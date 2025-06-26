@@ -19,7 +19,7 @@ double calculateDistanceMeters(GPSLocation loc1, GPSLocation loc2) {
 void handleNoGPSFix() {
   Serial.println("GPS fix not found within 5 minutes. Exiting...");
   isUser_atHome = false;
-  send_message_Render("potential_zone_left"); // ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+  send_message_Render("notify","potential_zone_left"); // ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
   // You can add your own custom handling code here (e.g., restart device, alert user, etc.)
 }
 
@@ -45,7 +45,7 @@ void potential_zone_left(){
   } else {
     Serial.println("User is away from home.");
     isUser_atHome = false;
-    send_message_Render("absolute_house_left"); // ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+    send_message_Render("notify","absolute_house_left"); // ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
   }
 }
 

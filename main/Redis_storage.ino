@@ -9,21 +9,10 @@ void send_data_Redis(const GPSLocation& location) {
 
   String coordinate = "(" + String(location.latitude,6) + "," + String(location.longitude,6) + ")";
 
-  Serial.println("Sending GPS location data to Redis...");
+  Serial.println("Sending GPS location as JSON via send_message_Render...");
   
-  // Send data to Upstash
-  HTTPClient http;
-  http.begin(String(upstash_url) + "/lpush/location/"+coordinate);
-  http.addHeader("Authorization", auth_token);
-  // http.addHeader("Content-Type", "application/json");
-
-  int httpResponseCode = http.POST(""); // No body needed for simple commands
-  String response = http.getString();
-
-  Serial.println("Response Code: " + String(httpResponseCode));
-  Serial.println("Response: " + response);
-
-  http.end();
+  // Use the existing function to send the data
+  send_message_Render("save_location", coordinate);
 
 }
 
