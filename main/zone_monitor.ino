@@ -21,7 +21,7 @@ std::vector<String> getKnownBSSIDList() {
 
 void addBSSID(const String& newBssid, const std::vector<String>& knownBSSIDs) {
   String list = prefs.getString("known_bssids", "");
-  if (!isKnownBSSID(newBssid,knownBSSIDs)) {
+  if (knownBSSIDs.size() < 6 && !isKnownBSSID(newBssid,knownBSSIDs)) {
     list += (list.length() > 0 ? "," : "") + newBssid;
     prefs.putString("known_bssids", list);
     Serial.println("🧠 Learned and added: " + newBssid);

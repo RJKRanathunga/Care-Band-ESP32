@@ -54,19 +54,27 @@ struct GPSLocation {
   double longitude;
 };
 
+// ENABLE BLUETOOTH
+const int buttonPin = 0;  // Change if using another GPIO
+bool btInitialized = false;
+
 // GSM serial
-HardwareSerial gsm(1); // Use UART1 (pins 16, 17)
+HardwareSerial gsm(1); // Use UART1 (pins 26, 27)
+#define GSM_RX 26  // Change according to your wiring
+#define GSM_TX 27
 
 // ********************************* setup ************
 void setup() {
   Serial.begin(115200);
+  pinMode(buttonPin, INPUT_PULLUP);  // Button connected to GND
   prefs.begin("wifi_prefs", false);
   wifiMutex = xSemaphoreCreateMutex();
   xTaskCreate(Zone_monitor, "ZoneMonitor", 4096, NULL, 1, NULL);
   gpsSerial.begin(GPS_BAUD, SERIAL_8N1, RXD2, TXD2);
-  SerialBT.begin("ESP32_BT_Device"); // Bluetooth device name
-  Serial.println("Bluetooth started!");
+  // SerialBT.begin("ESP32_BT_Device"); // Bluetooth device name
+  // Serial.println("Bluetooth started!");
   WiFi.setAutoReconnect(false);
+  
 
   Wire.begin();
   Wire.setClock(400000);  // Fast I2C speed
@@ -115,10 +123,23 @@ void Zone_monitor(void *pvParameters) {
 
 
 void loop() {
-  if (SerialBT.available()) {
+  // Check for button press to enable Bluetooth
+  if (!btInitialized && digitalRead(buttonPin) == LOW) {
+    Serial.println("Button pressed! Initializing Bluetooth...");
+    SerialBT.begin("ESP32_BT_Device");
+    btInitialized = true;
+    Serial.println("Bluetooth initialized");
+  }
+
+  // Only access SerialBT if it's initialized
+  if (btInitialized && SerialBT.available()) {
     String incoming = SerialBT.readStringUntil('\n'); // Read till newline for safer JSON parsing
     Serial.println("Received: " + incoming);
     SerialBT.println("Echo: " + incoming);
     handle_bluetooth_command(incoming);
   }
+
+  // You can add other non-Bluetooth logic here too
+  delay(10);  // Short delay to avoid CPU hogging
 }
+
