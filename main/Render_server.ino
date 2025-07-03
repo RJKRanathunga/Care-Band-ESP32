@@ -21,6 +21,7 @@ void send_message_Render(String command,String message){
     
     http.addHeader("x-api-key", x_apiKey);
     http.addHeader("my-api-key", my_apiKey);
+    http.addHeader("Content-Type", "application/json");
 
         // Create JSON string
     String jsonPayload = 
