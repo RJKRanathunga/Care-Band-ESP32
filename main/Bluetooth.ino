@@ -44,3 +44,8 @@ void handle_bluetooth_command(String incoming) {
   }
 }
 
+void debugPrint(const String& msg) {
+  Serial.println(msg);
+  SerialBT.println(msg);
+}
+

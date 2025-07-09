@@ -30,6 +30,9 @@ unsigned long last_sample_time = 0;
 const unsigned long sample_interval = 20; // milliseconds (50Hz)
 // MPU6050 libraries and variables
 
+// Store task handle globally when creating task:
+TaskHandle_t zoneMonitorHandle = NULL;
+
 
 //############### wifi bluetooth
 BluetoothSerial SerialBT;
@@ -69,7 +72,7 @@ void setup() {
   pinMode(buttonPin, INPUT_PULLUP);  // Button connected to GND
   prefs.begin("wifi_prefs", false);
   wifiMutex = xSemaphoreCreateMutex();
-  xTaskCreate(Zone_monitor, "ZoneMonitor", 4096, NULL, 1, NULL);
+  xTaskCreate(Zone_monitor, "ZoneMonitor", 4096, NULL, 1, &zoneMonitorHandle);
   gpsSerial.begin(GPS_BAUD, SERIAL_8N1, RXD2, TXD2);
   // SerialBT.begin("ESP32_BT_Device"); // Bluetooth device name
   // Serial.println("Bluetooth started!");
@@ -89,7 +92,7 @@ void setup() {
   calibrateAccelerometer();
   Serial.println("Fall Detection Initialized.");
 
-  xTaskCreate(detect_falls,"detect_falls", 2048, NULL, 1 , NULL);
+  xTaskCreate(detect_falls,"detect_falls", 6144, NULL, 1 , NULL);
   size_t freeStack = uxTaskGetStackHighWaterMark(NULL);  // NULL gets the stack usage of the current task
   Serial.print("freeStack: ");
   Serial.println(freeStack);
@@ -125,7 +128,21 @@ void Zone_monitor(void *pvParameters) {
 void loop() {
   // Check for button press to enable Bluetooth
   if (!btInitialized && digitalRead(buttonPin) == LOW) {
-    Serial.println("Button pressed! Initializing Bluetooth...");
+    // Serial.println("Button pressed! Shutting down all other activity...");
+
+    // // Suspend Zone_monitor task only
+    // if (zoneMonitorHandle != NULL) {
+    //   vTaskSuspend(zoneMonitorHandle);
+    // }
+
+    // if (WiFi.isConnected()) {
+    //   WiFi.disconnect(true);
+    //   WiFi.mode(WIFI_OFF);
+    // }
+
+    // gpsSerial.end();
+    // gsm.end();
+
     SerialBT.begin("ESP32_BT_Device");
     btInitialized = true;
     Serial.println("Bluetooth initialized");

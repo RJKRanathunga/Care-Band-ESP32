@@ -17,7 +17,12 @@ void detect_falls(void *pvParameters){
         Serial.println("✅ Fall Confirmed!");
         last_fall_time = millis();
         fall_detected = true;
-        send_message_Render("notify","fall_detected");
+        // Critical section - add error handling
+        if (xPortGetFreeHeapSize() > 16*1024) {  // Check available memory
+          send_message_Render("notify","fall_detected");
+        } else {
+          Serial.println("Error: Low memory. Couldn't send notification for fall detection");
+        }
         // digitalWrite(LED_PIN, HIGH);
       } else {
         Serial.println("❌ Movement after impact — not a fall.");

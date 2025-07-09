@@ -19,8 +19,6 @@ void send_message_Render(String command,String message){
     Serial.println(WiFi.localIP());
     Serial.printf("Free heap before HTTPS request: %u bytes\n", ESP.getFreeHeap()); // Should return more than 20000 bytes
     
-    http.addHeader("x-api-key", x_apiKey);
-    http.addHeader("my-api-key", my_apiKey);
     http.addHeader("Content-Type", "application/json");
 
         // Create JSON string
