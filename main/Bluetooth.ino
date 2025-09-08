@@ -15,7 +15,7 @@ void handle_bluetooth_command(String incoming) {
 
   // Step 2: Wait until the current Zone_monitor finishes and releases mutex
   if (xSemaphoreTake(wifiMutex, portMAX_DELAY)) {
-    Serial.println("🔧 Running user command...");
+    debugPrint("🔧 Running user command...");
 
     if (command == "connect_wifi") {
       const char* ssid = doc["ssid"];
@@ -25,7 +25,7 @@ void handle_bluetooth_command(String incoming) {
       confirmHome();
     } else if (command == "clear_memory") {
       prefs.clear();
-      Serial.println("🔄 Preferences cleared.");
+      debugPrint("🔄 Preferences cleared.");
     } else if (command == "shut_down") {
       shut_down();
     } else if (command == "restart") {

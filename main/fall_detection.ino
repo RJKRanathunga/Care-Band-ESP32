@@ -14,7 +14,7 @@ void detect_falls(void *pvParameters){
       Serial.println("Impact detected! Checking for low activity...");
       bool isLowMovement = checkPostImpactStillness();
       if (isLowMovement) {
-        Serial.println("✅ Fall Confirmed!");
+        debugPrint("✅ Fall Confirmed!");
         last_fall_time = millis();
         fall_detected = true;
         // Critical section - add error handling
@@ -25,7 +25,7 @@ void detect_falls(void *pvParameters){
         }
         // digitalWrite(LED_PIN, HIGH);
       } else {
-        Serial.println("❌ Movement after impact — not a fall.");
+        debugPrint("❌ Movement after impact — not a fall.");
       }
     }
   }

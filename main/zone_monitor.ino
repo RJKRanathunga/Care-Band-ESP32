@@ -41,7 +41,7 @@ void monitorZone() {
   int n = WiFi.scanNetworks();
 
   if (n < 0) {
-    Serial.println("❌ Wi-Fi scan failed (returned -1).");
+    debugPrint("❌ Wi-Fi scan failed (returned -1).");
     return;
   } else if (n == 0) {
     Serial.println("No networks found.");
@@ -65,7 +65,7 @@ void monitorZone() {
   }
 
   if (knownCount == 0) {
-    Serial.println("🚨 OUT OF ZONE: No known BSSIDs.");
+    debugPrint("🚨 OUT OF ZONE: No known BSSIDs.");
     potential_zone_left();
   } else { 
     Serial.printf("✅ SAFE: %d known BSSIDs found.\n", knownCount);

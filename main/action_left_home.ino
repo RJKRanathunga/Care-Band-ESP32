@@ -17,7 +17,7 @@ double calculateDistanceMeters(GPSLocation loc1, GPSLocation loc2) {
 
 // Called if GPS fix is not obtained in 5 minutes
 void handleNoGPSFix() {
-  Serial.println("GPS fix not found within 5 minutes. Exiting...");
+  debugPrint("GPS fix not found within 5 minutes. Exiting...");
   isUser_atHome = false;
   send_message_Render("notify","potential_zone_left"); // ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
   // You can add your own custom handling code here (e.g., restart device, alert user, etc.)
@@ -54,7 +54,7 @@ void trackUser(){
   GPSLocation current_location = getGPSLocation(); 
   GPSLocation home_location = getHomeLocation();
   if (current_location.latitude == 0.0 && current_location.longitude == 0.0) { // current_location = {};
-    Serial.println("Unable to access the location !!");
+    debugPrint("Unable to access the location !!");
     return;
   }
  
@@ -66,7 +66,7 @@ void trackUser(){
     // send_data_Redis(current_location);   // send GPS location to redis
     String coordinate = "(" + String(current_location.latitude,6) + "," + String(current_location.longitude,6) + ")";
 
-    Serial.println("Sending GPS location as JSON via send_message_Render...");
+    debugPrint("Sending GPS location as JSON via send_message_Render...");
     // Use the existing function to send the data
     send_message_Render("save_location", coordinate);
   }
