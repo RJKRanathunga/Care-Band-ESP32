@@ -58,5 +58,10 @@ It is now closed and no longer actively maintained, but contributions are welcom
 ---
 
 ## 📜 License
-This project is released under a permissive license:  
-You may use, modify, and redistribute this code freely **without attribution**.
+This project is released under a permissive license:
+
+- You may use, modify, and redistribute this code for personal, educational, or commercial purposes.  
+- Attribution is not required.  
+- However, you may **not re-publish this project as your own work without making substantial changes to the codebase**.  
+- Any reuse should clearly distinguish derivative work from the original Care Band project.
+
